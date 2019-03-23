@@ -1,11 +1,11 @@
-<<<<<<< HEAD
-import React,ReactDOM, { Component } from 'react';
+//
+// import React,ReactDOM, { Component } from 'react';
+//
+// ReactDOM.render(
+//   <h1>hello wordl</h1>,
+//   document.getElementById('root')
+// )
 
-ReactDOM.render(
-  <h1>hello wordl</h1>,
-  document.getElementById('root')
-)
-=======
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -34,4 +34,4 @@ class App extends Component {
 }
 
 export default App;
->>>>>>> 7b1abcfafb7909d8da87fe05a603f2e1a495800a
+

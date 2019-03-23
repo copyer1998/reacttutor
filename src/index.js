@@ -1,33 +1,98 @@
 import React from 'react';
-<<<<<<< HEAD
-import ReactDOM from "react-dom";
-import './index.css'
+import ReactDOM from 'react-dom';
+import './index.css';
 
+class Square extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: null,
+        }
+    }
 
-class ShoppingList extends React.Component{
     render() {
         return (
-            <div className="shopping-list">
-                <h1>shopping list for {this.props.name}</h1>
-                <ul>
-                    <li>instagram</li>
-                    <li>instagram</li>
-                    <li>instagram</li>
-                </ul>
+            <button
+                className="square"
+                onClick={() => this.props.onClick()}>
+                {this.props.value/* TODO */}
+            </button>
+        );
+    }
+
+
+}
+
+class Board extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null),
+            xIsNext: true
+        }
+    }
+
+    handleClick(i) {
+        const squares = this.state.squares.slice();
+        squares[i] = this.state.xIsNext ? 'x' : 'O';
+        this.setState({
+            squares: squares,
+            xIsNext: !this.state.xIsNext,
+        })
+    }
+
+    renderSquare(i) {
+        return (<Square
+            value={this.state.squares[i]}
+            onClick={() => this.handleClick(i)}
+        />);
+    }
+
+    render() {
+        const status = 'Next player: X' + (this.state.xIsNext ? "x" : "O");
+
+        return (
+            <div>
+                <div className="status">{status}</div>
+                <div className="board-row">
+                    {this.renderSquare(0)}
+                    {this.renderSquare(1)}
+                    {this.renderSquare(2)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(3)}
+                    {this.renderSquare(4)}
+                    {this.renderSquare(5)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(6)}
+                    {this.renderSquare(7)}
+                    {this.renderSquare(8)}
+                </div>
             </div>
         );
     }
 }
-=======
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+class Game extends React.Component {
+    render() {
+        return (
+            <div className="game">
+                <div className="game-board">
+                    <Board/>
+                </div>
+                <div className="game-info">
+                    <div>{/* status */}</div>
+                    <ol>{/* TODO */}</ol>
+                </div>
+            </div>
+        );
+    }
+}
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
->>>>>>> 7b1abcfafb7909d8da87fe05a603f2e1a495800a
+// ========================================
+
+ReactDOM.render(
+    <Game/>,
+    document.getElementById('root')
+);
