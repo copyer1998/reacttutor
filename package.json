@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "jquery": "^3.3.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
@@ -10,6 +11,11 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"
+=======
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-scripts": "2.1.8"
+>>>>>>> 7b1abcfafb7909d8da87fe05a603f2e1a495800a
   },
   "scripts": {
     "start": "react-scripts start",
