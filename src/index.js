@@ -1,98 +1,105 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
+import ReactDOM from 'react-dom'
 
-class Square extends React.Component {
+function ListItem(props) {
+    // 正确！这里不需要指定 key:
+    return <li>{props.value}</li>;
+}
+
+class NameForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            value: null,
-        }
+        this.state = {value: ''};
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    render() {
-        return (
-            <button
-                className="square"
-                onClick={() => this.props.onClick()}>
-                {this.props.value/* TODO */}
-            </button>
-        );
+    handleChange(event) {
+        this.setState({value: event.target.value})
     }
 
-
+    handleSubmit(event) {
+        alert('提交的名字' + this.state.value);
+        event.preventDefault();
+    }
 }
 
-class Board extends React.Component {
+function NumberList(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number) =>
+        // 正确！key 应该在数组的上下文中被指定
+        <ListItem key={number.toString()}
+                  value={number}/>
+    );
+    return (
+        <ul>
+            {listItems}
+        </ul>
+    );
+}
+
+function Blog(props) {
+    const sidebar = (
+        <ul>
+            {props.posts.map((post) =>
+                <li key={post.id}>{post.title}</li>
+            )}
+        </ul>
+    );
+    const content = props.posts.map((post) =>
+        <div key={post.id}>
+            <h3>{post.title}</h3>
+            <p>{post.content}</p>
+        </div>
+    );
+    return (
+        <div>
+            {sidebar}
+            <hr/>
+            {content}
+        </div>
+    )
+}
+
+const posts = [
+    {id: 1, title: 'Hello World', content: 'Welcome to learning React!'},
+    {id: 2, title: 'Installation', content: 'You can install React from npm.'}
+]
+
+function BoilingVerdict(props) {
+    if (props.celsius >= 100) {
+        return <p>the water would boil</p>
+    }
+    return <p>the water would not boil</p>
+}
+
+class Calculator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            squares: Array(9).fill(null),
-            xIsNext: true
-        }
+        this.handleChange = this.handleChange.bind(this);
+        this.state = {temperature: ''}
     }
 
-    handleClick(i) {
-        const squares = this.state.squares.slice();
-        squares[i] = this.state.xIsNext ? 'x' : 'O';
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext,
-        })
-    }
-
-    renderSquare(i) {
-        return (<Square
-            value={this.state.squares[i]}
-            onClick={() => this.handleClick(i)}
-        />);
+    handleChange(e) {
+        this.setState({temperature: e.target.value})
     }
 
     render() {
-        const status = 'Next player: X' + (this.state.xIsNext ? "x" : "O");
-
+        const temperature = this.state.temperature;
         return (
-            <div>
-                <div className="status">{status}</div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
-            </div>
-        );
+            <fieldset>
+                <legend>enter temperaturein celsius</legend>
+                <input value={temperature} onChange={this.handleChange}/>
+                <BoilingVerdict celsius={parseFloat(temperature)}/>
+            </fieldset>
+        )
     }
-}
 
-class Game extends React.Component {
-    render() {
-        return (
-            <div className="game">
-                <div className="game-board">
-                    <Board/>
-                </div>
-                <div className="game-info">
-                    <div>{/* status */}</div>
-                    <ol>{/* TODO */}</ol>
-                </div>
-            </div>
-        );
-    }
 }
-
-// ========================================
 
 ReactDOM.render(
-    <Game/>,
+    <Blog posts={posts}/>
+    ,
     document.getElementById('root')
 );
