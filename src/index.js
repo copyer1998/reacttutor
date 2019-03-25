@@ -1,105 +1,98 @@
-import React from 'react';
-import './index.css';
-import ReactDOM from 'react-dom'
+import React from "react";
+import "./index.css";
+import ReactDOM from "react-dom";
+const scaleNames = {
+  c: "Celsius",
+  f: "Fahrenheit"
+};
 
-function ListItem(props) {
-    // 正确！这里不需要指定 key:
-    return <li>{props.value}</li>;
+function toCelsius(fahrenheit) {
+  return ((fahrenheit - 32) * 5) / 9;
 }
 
-class NameForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {value: ''};
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
-        this.setState({value: event.target.value})
-    }
-
-    handleSubmit(event) {
-        alert('提交的名字' + this.state.value);
-        event.preventDefault();
-    }
+function toFahrenheit(celsius) {
+  return (celsius * 9) / 5 + 32;
 }
 
-function NumberList(props) {
-    const numbers = props.numbers;
-    const listItems = numbers.map((number) =>
-        // 正确！key 应该在数组的上下文中被指定
-        <ListItem key={number.toString()}
-                  value={number}/>
-    );
-    return (
-        <ul>
-            {listItems}
-        </ul>
-    );
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return "";
+  }
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
 }
-
-function Blog(props) {
-    const sidebar = (
-        <ul>
-            {props.posts.map((post) =>
-                <li key={post.id}>{post.title}</li>
-            )}
-        </ul>
-    );
-    const content = props.posts.map((post) =>
-        <div key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
-        </div>
-    );
-    return (
-        <div>
-            {sidebar}
-            <hr/>
-            {content}
-        </div>
-    )
-}
-
-const posts = [
-    {id: 1, title: 'Hello World', content: 'Welcome to learning React!'},
-    {id: 2, title: 'Installation', content: 'You can install React from npm.'}
-]
 
 function BoilingVerdict(props) {
-    if (props.celsius >= 100) {
-        return <p>the water would boil</p>
-    }
-    return <p>the water would not boil</p>
+  if (props.celsius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onTemperatureChange(e.target.value);
+  }
+
+  render() {
+    const temperature = this.props.temperature;
+    const scale = this.props.scale;
+    return (
+      <fieldset>
+        <legend>Enter temperature in {scaleNames[scale]}:</legend>
+        <input value={temperature} onChange={this.handleChange} />
+      </fieldset>
+    );
+  }
 }
 
 class Calculator extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-        this.state = {temperature: ''}
-    }
+  constructor(props) {
+    super(props);
+    this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+    this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+    this.state = { temperature: "", scale: "c" };
+  }
 
-    handleChange(e) {
-        this.setState({temperature: e.target.value})
-    }
+  handleCelsiusChange(temperature) {
+    this.setState({ scale: "c", temperature });
+  }
 
-    render() {
-        const temperature = this.state.temperature;
-        return (
-            <fieldset>
-                <legend>enter temperaturein celsius</legend>
-                <input value={temperature} onChange={this.handleChange}/>
-                <BoilingVerdict celsius={parseFloat(temperature)}/>
-            </fieldset>
-        )
-    }
+  handleFahrenheitChange(temperature) {
+    this.setState({ scale: "f", temperature });
+  }
 
+  render() {
+    const scale = this.state.scale;
+    const temperature = this.state.temperature;
+    const celsius =
+      scale === "f" ? tryConvert(temperature, toCelsius) : temperature;
+    const fahrenheit =
+      scale === "c" ? tryConvert(temperature, toFahrenheit) : temperature;
+
+    return (
+      <div>
+        <TemperatureInput
+          scale="c"
+          temperature={celsius}
+          onTemperatureChange={this.handleCelsiusChange}
+        />
+        <TemperatureInput
+          scale="f"
+          temperature={fahrenheit}
+          onTemperatureChange={this.handleFahrenheitChange}
+        />
+        <BoilingVerdict celsius={parseFloat(celsius)} />
+      </div>
+    );
+  }
 }
 
-ReactDOM.render(
-    <Blog posts={posts}/>
-    ,
-    document.getElementById('root')
-);
+ReactDOM.render(<Calculator />, document.getElementById("root"));
